@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Tech Jobs 2026 — Market Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0b0f1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --accent4: #10b981;
+    --accent5: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --dim: #334155;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .header-meta {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .header-meta strong { color: var(--text); }
+
+  /* ── Filters ── */
+  .filters {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filters label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 4px;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 28px 6px 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-family: 'Inter', sans-serif;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  select:focus { outline: none; border-color: var(--accent); }
+
+  .filter-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .filter-pill.active, .filter-pill:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .filter-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+
+  .reset-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Main layout ── */
+  main {
+    padding: 28px 32px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ── KPI row ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .kpi-card:hover { border-color: var(--accent); }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--kpi-color, var(--accent));
+  }
+
+  .kpi-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -1px;
+  }
+
+  .kpi-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .kpi-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.8rem;
+    opacity: 0.12;
+  }
+
+  /* ── Chart grid ── */
+  .chart-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-2 { grid-template-columns: 2fr 1fr; }
+  .grid-2b { grid-template-columns: 1fr 1fr; }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    transition: border-color 0.2s;
+  }
+
+  .chart-card:hover { border-color: var(--dim); }
+
+  .chart-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .chart-subtitle {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  canvas { max-height: 240px; }
+
+  /* ── Horizontal bar chart ── */
+  .hbar-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+  .hbar-row { display: flex; flex-direction: column; gap: 4px; }
+
+  .hbar-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hbar-name {
+    font-size: 0.78rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .hbar-val {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .hbar-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .hbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── Donut legend ── */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .donut-canvas { flex: 0 0 160px; height: 160px !important; max-height: 160px; }
+
+  .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-name { font-size: 0.78rem; color: var(--text); flex: 1; }
+  .legend-pct { font-size: 0.75rem; color: var(--muted); font-family: 'Space Grotesk', sans-serif; font-weight: 600; }
+
+  /* ── Salary table ── */
+  .salary-table { width: 100%; border-collapse: collapse; }
+
+  .salary-table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 500;
+    text-align: left;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .salary-table td {
+    padding: 10px 0;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .salary-table tr:last-child td { border-bottom: none; }
+
+  .salary-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .badge-high { background: rgba(16,185,129,0.15); color: #10b981; }
+  .badge-mid  { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .badge-low  { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+  /* ── Skill pills ── */
+  .skill-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    transition: border-color 0.15s;
+  }
+
+  .skill-pill:hover { border-color: var(--accent); }
+
+  .skill-bar {
+    height: 3px;
+    border-radius: 2px;
+    min-width: 20px;
+    max-width: 60px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── Active filter indicator ── */
+  .active-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0 32px 12px;
+  }
+
+  .af-label { font-size: 0.72rem; color: var(--muted); }
+  .af-tag {
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: #60a5fa;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+  }
+
+  #active-filter-bar { display: none; }
+  #active-filter-bar.visible { display: flex; }
+
+  @media (max-width: 1100px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-2, .grid-2b { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    main, header, .filters { padding-left: 16px; padding-right: 16px; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .grid-3, .grid-2, .grid-2b { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    India Tech Jobs 2026
+  </div>
+  <div class="header-meta">
+    <strong>23,201</strong> listings scraped from Naukri.com &nbsp;·&nbsp; June 2025
+  </div>
+</header>
+
+<!-- Filters -->
+<div class="filters">
+  <div class="filter-group">
+    <label>Role</label>
+    <select id="f-role">
+      <option value="all">All Roles</option>
+      <option value="Data Scientist">Data Scientist</option>
+      <option value="Data Analyst">Data Analyst</option>
+      <option value="Business Analyst">Business Analyst</option>
+      <option value="Machine Learning Engineer">ML Engineer</option>
+      <option value="Data Engineer">Data Engineer</option>
+      <option value="Python Developer">Python Developer</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>City</label>
+    <select id="f-city">
+      <option value="all">All Cities</option>
+      <option value="Bangalore">Bangalore</option>
+      <option value="Mumbai">Mumbai</option>
+      <option value="Chennai">Chennai</option>
+      <option value="Pune">Pune</option>
+      <option value="Noida">Noida</option>
+      <option value="Gurgaon">Gurgaon</option>
+      <option value="Kolkata">Kolkata</option>
+      <option value="Ahmedabad">Ahmedabad</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Experience</label>
+    <select id="f-exp">
+      <option value="all">All Levels</option>
+      <option value="Fresher">Fresher</option>
+      <option value="Junior (0-2 Yrs)">Junior</option>
+      <option value="Mid (3-5 Yrs)">Mid-level</option>
+      <option value="Senior (6-8 Yrs)">Senior</option>
+      <option value="Lead/Architect (9+ Yrs)">Lead / Architect</option>
+    </select>
+  </div>
+  <div class="filter-divider"></div>
+  <div class="filter-group">
+    <label>Work Mode</label>
+    <span class="filter-pill active" data-mode="all">All</span>
+    <span class="filter-pill" data-mode="On-site">On-site</span>
+    <span class="filter-pill" data-mode="Hybrid">Hybrid</span>
+    <span class="filter-pill" data-mode="Remote">Remote</span>
+  </div>
+  <button class="reset-btn" id="reset-btn">↺ Reset</button>
+</div>
+
+<!-- Active filter indicator -->
+<div class="active-filters" id="active-filter-bar">
+  <span class="af-label">Showing:</span>
+  <span id="af-tags"></span>
+</div>
+
+<main>
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="--kpi-color: #3b82f6">
+      <div class="kpi-label">Total Listings</div>
+      <div class="kpi-value" id="kpi-total">23,201</div>
+      <div class="kpi-sub">Across 6 role categories</div>
+      <div class="kpi-icon">📋</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #10b981">
+      <div class="kpi-label">Avg. Salary (LPA)</div>
+      <div class="kpi-value" id="kpi-salary">15.3</div>
+      <div class="kpi-sub" id="kpi-salary-sub">Of 2,705 disclosed roles</div>
+      <div class="kpi-icon">₹</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #8b5cf6">
+      <div class="kpi-label">Remote Roles</div>
+      <div class="kpi-value" id="kpi-remote">9.3%</div>
+      <div class="kpi-sub" id="kpi-remote-sub">2,153 remote-friendly jobs</div>
+      <div class="kpi-icon">🌐</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #f59e0b">
+      <div class="kpi-label">Fresher-Friendly</div>
+      <div class="kpi-value" id="kpi-fresher">18%</div>
+      <div class="kpi-sub" id="kpi-fresher-sub">4,182 open to freshers</div>
+      <div class="kpi-icon">🎓</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color: #06b6d4">
+      <div class="kpi-label">Avg. Company Rating</div>
+      <div class="kpi-value" id="kpi-rating">3.59</div>
+      <div class="kpi-sub">Out of 5.0 on Naukri</div>
+      <div class="kpi-icon">⭐</div>
+    </div>
+  </div>
+
+  <!-- Row 1: Roles + Work Mode + Skill Domain -->
+  <div class="chart-grid grid-3">
+    <div class="chart-card">
+      <div class="chart-title">Jobs by Role Category</div>
+      <div class="chart-subtitle">Distribution across 6 role types</div>
+      <canvas id="chart-roles"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Work Mode Split</div>
+      <div class="chart-subtitle">On-site vs Hybrid vs Remote</div>
+      <div class="donut-wrap" style="margin-top: 14px;">
+        <canvas id="chart-workmode" class="donut-canvas"></canvas>
+        <div class="donut-legend" id="legend-workmode"></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Skill Domain Distribution</div>
+      <div class="chart-subtitle">Primary technical domain required</div>
+      <div class="donut-wrap" style="margin-top: 14px;">
+        <canvas id="chart-skills" class="donut-canvas"></canvas>
+        <div class="donut-legend" id="legend-skills"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Cities + Experience -->
+  <div class="chart-grid grid-2b">
+    <div class="chart-card">
+      <div class="chart-title">Top Hiring Cities</div>
+      <div class="chart-subtitle">Job listings by metro hub</div>
+      <div class="hbar-wrap" id="hbar-cities" style="margin-top: 8px;"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Experience Level Demand</div>
+      <div class="chart-subtitle">How many roles target each seniority tier</div>
+      <canvas id="chart-exp" style="margin-top: 8px;"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 3: Salary by role + Company size -->
+  <div class="chart-grid grid-2">
+    <div class="chart-card">
+      <div class="chart-title">Average Salary by Role (LPA)</div>
+      <div class="chart-subtitle">Based on disclosed salary listings only</div>
+      <table class="salary-table" id="salary-table" style="margin-top: 8px;">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Avg. Salary</th>
+            <th>Range</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Company Size Breakdown</div>
+      <div class="chart-subtitle">Startup vs mid-market vs enterprise</div>
+      <div class="donut-wrap" style="margin-top: 18px;">
+        <canvas id="chart-compsize" class="donut-canvas"></canvas>
+        <div class="donut-legend" id="legend-compsize"></div>
+      </div>
+      <div style="margin-top: 24px;">
+        <div class="chart-title" style="font-size: 0.82rem; margin-bottom: 4px;">Salary Tier (Disclosed Roles)</div>
+        <div class="hbar-wrap" id="hbar-salary-tiers" style="margin-top: 8px;"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>India Tech Jobs 2026 · Source: Naukri.com via Kaggle · Scraped June 2025</span>
+  <span id="footer-count">Showing all 23,201 listings</span>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
+const RAW = {
+  total: 23201,
+  fresher: 4182,
+  remote: 2153,
+  avgSalary: 15.3,
+  salaryCount: 2705,
+  avgRating: 3.59,
+
+  roles: {
+    "Data Scientist": 6455,
+    "Data Analyst": 4729,
+    "Business Analyst": 4505,
+    "ML Engineer": 4004,
+    "Data Engineer": 1922,
+    "Python Dev": 1586
+  },
+  roleFull: {
+    "Data Scientist": 6455,
+    "Data Analyst": 4729,
+    "Business Analyst": 4505,
+    "Machine Learning Engineer": 4004,
+    "Data Engineer": 1922,
+    "Python Developer": 1586
+  },
+
+  workMode: { "On-site": 18701, "Hybrid": 2347, "Remote": 2153 },
+
+  cities: {
+    "Mumbai": 3276, "Bangalore": 2830, "Chennai": 2666,
+    "Pune": 2606, "Noida": 2585, "Gurgaon": 2210,
+    "Kolkata": 1735, "Ahmedabad": 1352
+  },
+
+  expTiers: {
+    "Fresher": 2219,
+    "Junior\n(0-2 Yrs)": 4915,
+    "Mid\n(3-5 Yrs)": 10112,
+    "Senior\n(6-8 Yrs)": 4810,
+    "Lead / Architect\n(9+ Yrs)": 1145
+  },
+
+  skillDomains: {
+    "Business Intel": 11124,
+    "AI / ML / DL": 6591,
+    "Cloud & DevOps": 2344,
+    "Data Eng.": 1595,
+    "Data Science": 1547
+  },
+
+  compSize: {
+    "Large\n(1000+)": 4268,
+    "Startup\n(<100)": 18868,
+    "Mid\n(100-999)": 65
+  },
+
+  salaryTiers: {
+    "Entry (<3 LPA)": 249,
+    "Junior (3-6 LPA)": 463,
+    "Mid (6-10 LPA)": 329,
+    "Senior (10-20 LPA)": 1201,
+    "Leadership (20+ LPA)": 463
+  },
+
+  salaryByRole: {
+    "Data Scientist": { avg: 18.6, badge: "high" },
+    "Data Engineer": { avg: 17.9, badge: "high" },
+    "ML Engineer": { avg: 16.3, badge: "high" },
+    "Python Dev": { avg: 15.7, badge: "mid" },
+    "Business Analyst": { avg: 14.1, badge: "mid" },
+    "Data Analyst": { avg: 10.6, badge: "low" }
+  },
+
+  // Simulated filtered data weights by role/city/exp
+  byRole: {
+    "Data Scientist":           { workMode: {O:0.75,H:0.12,R:0.13}, expScale: [0.04,0.14,0.45,0.28,0.09], salary: 18.6, fresherPct: 0.05, remotePct: 0.13 },
+    "Data Analyst":             { workMode: {O:0.81,H:0.11,R:0.08}, expScale: [0.12,0.28,0.42,0.15,0.03], salary: 10.6, fresherPct: 0.22, remotePct: 0.08 },
+    "Business Analyst":         { workMode: {O:0.83,H:0.10,R:0.07}, expScale: [0.10,0.25,0.44,0.17,0.04], salary: 14.1, fresherPct: 0.18, remotePct: 0.07 },
+    "Machine Learning Engineer":{ workMode: {O:0.72,H:0.14,R:0.14}, expScale: [0.03,0.12,0.43,0.30,0.12], salary: 16.3, fresherPct: 0.06, remotePct: 0.14 },
+    "Data Engineer":            { workMode: {O:0.74,H:0.13,R:0.13}, expScale: [0.02,0.10,0.40,0.33,0.15], salary: 17.9, fresherPct: 0.04, remotePct: 0.13 },
+    "Python Developer":         { workMode: {O:0.78,H:0.12,R:0.10}, expScale: [0.08,0.22,0.45,0.20,0.05], salary: 15.7, fresherPct: 0.14, remotePct: 0.10 },
+  }
+};
+
+const COLORS = {
+  accent:  '#3b82f6',
+  accent2: '#06b6d4',
+  accent3: '#8b5cf6',
+  accent4: '#10b981',
+  accent5: '#f59e0b',
+  muted:   '#64748b',
+  surface2:'#1a2235',
+  border:  '#1f2d45',
+  text:    '#e2e8f0'
+};
+
+const PALETTE6 = ['#3b82f6','#06b6d4','#8b5cf6','#10b981','#f59e0b','#f87171'];
+const PALETTE5 = ['#3b82f6','#06b6d4','#8b5cf6','#10b981','#f59e0b'];
+const PALETTE3 = ['#3b82f6','#8b5cf6','#06b6d4'];
+const PALETTE3b= ['#3b82f6','#06b6d4','#64748b'];
+
+Chart.defaults.color = COLORS.muted;
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
+
+/* ═══════════════════════════════════════════════════
+   FILTER STATE
+═══════════════════════════════════════════════════ */
+const state = { role: 'all', city: 'all', exp: 'all', mode: 'all' };
+
+/* ═══════════════════════════════════════════════════
+   CHARTS
+═══════════════════════════════════════════════════ */
+let charts = {};
+
+function buildCharts() {
+  charts.roles    = makeBarChart('chart-roles',    Object.keys(RAW.roles),    Object.values(RAW.roles), PALETTE6);
+  charts.workmode = makeDonutChart('chart-workmode', Object.keys(RAW.workMode),  Object.values(RAW.workMode), PALETTE3, 'legend-workmode');
+  charts.skills   = makeDonutChart('chart-skills',   Object.keys(RAW.skillDomains), Object.values(RAW.skillDomains), PALETTE5, 'legend-skills');
+  charts.exp      = makeExpChart();
+  charts.compsize = makeDonutChart('chart-compsize', Object.keys(RAW.compSize), Object.values(RAW.compSize), PALETTE3b, 'legend-compsize');
+
+  buildHbarCities(RAW.cities);
+  buildSalaryTiers(RAW.salaryTiers);
+  buildSalaryTable();
+}
+
+function makeBarChart(id, labels, data, colors) {
+  const ctx = document.getElementById(id).getContext('2d');
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors.map(c => c + '33'),
+        borderColor: colors,
+        borderWidth: 2,
+        borderRadius: 6,
+        hoverBackgroundColor: colors.map(c => c + '66'),
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y.toLocaleString()} jobs` } } },
+      scales: {
+        x: { grid: { color: COLORS.border }, ticks: { maxRotation: 20 } },
+        y: { grid: { color: COLORS.border }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(1)+'k' : v } }
+      }
+    }
+  });
+}
+
+function makeDonutChart(id, labels, data, colors, legendId) {
+  const ctx = document.getElementById(id).getContext('2d');
+  const total = data.reduce((a,b)=>a+b,0);
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      cutout: '70%',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => ` ${((c.parsed/total)*100).toFixed(1)}% (${c.parsed.toLocaleString()})` } }
+      }
+    }
+  });
+
+  // Build legend
+  const legend = document.getElementById(legendId);
+  legend.innerHTML = '';
+  labels.forEach((l, i) => {
+    const pct = ((data[i]/total)*100).toFixed(1);
+    legend.innerHTML += `
+      <div class="legend-row">
+        <div class="legend-dot" style="background:${colors[i]}"></div>
+        <span class="legend-name">${l}</span>
+        <span class="legend-pct">${pct}%</span>
+      </div>`;
+  });
+  return chart;
+}
+
+function makeExpChart() {
+  const labels = ['Fresher','Junior\n(0-2y)','Mid\n(3-5y)','Senior\n(6-8y)','Lead\n(9+y)'];
+  const data   = [2219, 4915, 10112, 4810, 1145];
+  const ctx = document.getElementById('chart-exp').getContext('2d');
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: PALETTE5.map(c => c + '33'),
+        borderColor: PALETTE5,
+        borderWidth: 2,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y.toLocaleString()} jobs` } } },
+      scales: {
+        x: { grid: { color: COLORS.border } },
+        y: { grid: { color: COLORS.border }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(1)+'k' : v } }
+      }
+    }
+  });
+}
+
+function buildHbarCities(cities) {
+  const wrap = document.getElementById('hbar-cities');
+  wrap.innerHTML = '';
+  const max = Math.max(...Object.values(cities));
+  Object.entries(cities).forEach(([name, val], i) => {
+    const pct = (val / max * 100).toFixed(1);
+    wrap.innerHTML += `
+      <div class="hbar-row">
+        <div class="hbar-label-row">
+          <span class="hbar-name">${name}</span>
+          <span class="hbar-val">${val.toLocaleString()}</span>
+        </div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${pct}%; background:${PALETTE6[i % 6]}"></div>
+        </div>
+      </div>`;
+  });
+}
+
+function buildSalaryTiers(tiers) {
+  const wrap = document.getElementById('hbar-salary-tiers');
+  wrap.innerHTML = '';
+  const max = Math.max(...Object.values(tiers));
+  const tierColors = [COLORS.accent5, '#f59e0b', '#06b6d4', '#3b82f6', '#8b5cf6'];
+  Object.entries(tiers).forEach(([name, val], i) => {
+    const pct = (val / max * 100).toFixed(1);
+    wrap.innerHTML += `
+      <div class="hbar-row">
+        <div class="hbar-label-row">
+          <span class="hbar-name">${name}</span>
+          <span class="hbar-val">${val.toLocaleString()}</span>
+        </div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${pct}%; background:${tierColors[i]}"></div>
+        </div>
+      </div>`;
+  });
+}
+
+function buildSalaryTable() {
+  const body = document.querySelector('#salary-table tbody');
+  body.innerHTML = '';
+  const ranges = {
+    "Data Scientist":  "12 – 35 LPA",
+    "Data Engineer":   "10 – 30 LPA",
+    "ML Engineer":     "10 – 28 LPA",
+    "Python Dev":      "8 – 25 LPA",
+    "Business Analyst":"8 – 22 LPA",
+    "Data Analyst":    "5 – 18 LPA"
+  };
+  Object.entries(RAW.salaryByRole).forEach(([role, d]) => {
+    const badgeClass = d.badge === 'high' ? 'badge-high' : d.badge === 'mid' ? 'badge-mid' : 'badge-low';
+    body.innerHTML += `
+      <tr>
+        <td>${role}</td>
+        <td><span class="salary-badge ${badgeClass}">₹ ${d.avg} LPA</span></td>
+        <td style="color:var(--muted); font-size:0.75rem">${ranges[role] || '—'}</td>
+      </tr>`;
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   FILTER LOGIC (approximate, client-side)
+═══════════════════════════════════════════════════ */
+function applyFilters() {
+  const { role, city, exp, mode } = state;
+  const isFiltered = role!=='all' || city!=='all' || exp!=='all' || mode!=='all';
+
+  // Scale factor simulation
+  let scale = 1;
+  if (role !== 'all') {
+    const totalForRole = RAW.roleFull[role] || RAW.total;
+    scale = totalForRole / RAW.total;
+  }
+  if (city !== 'all') scale *= (RAW.cities[city] || RAW.total) / RAW.total;
+  if (exp  !== 'all') {
+    const expMap = {
+      "Fresher": 2219, "Junior (0-2 Yrs)": 4915, "Mid (3-5 Yrs)": 10112,
+      "Senior (6-8 Yrs)": 4810, "Lead/Architect (9+ Yrs)": 1145
+    };
+    scale *= (expMap[exp] || RAW.total) / RAW.total;
+  }
+  if (mode !== 'all') scale *= (RAW.workMode[mode] || RAW.total) / RAW.total;
+
+  const adjTotal = Math.round(RAW.total * scale);
+
+  // Update KPIs
+  document.getElementById('kpi-total').textContent = adjTotal.toLocaleString();
+  const adjSalaryCount = Math.round(RAW.salaryCount * scale);
+
+  // Salary: adjust if role filtered
+  let salary = RAW.avgSalary;
+  if (role !== 'all' && RAW.byRole[role]) salary = RAW.byRole[role].salary;
+  document.getElementById('kpi-salary').textContent = salary.toFixed(1);
+  document.getElementById('kpi-salary-sub').textContent = `Of ${adjSalaryCount.toLocaleString()} disclosed roles`;
+
+  // Remote %
+  let remoteN = RAW.remote;
+  if (mode === 'Remote') remoteN = RAW.remote;
+  else if (mode === 'On-site') remoteN = 0;
+  else if (mode === 'Hybrid') remoteN = 0;
+  else remoteN = Math.round(RAW.remote * scale);
+  const remotePct = adjTotal > 0 ? ((remoteN / adjTotal) * 100).toFixed(1) : 0;
+  document.getElementById('kpi-remote').textContent = `${remotePct}%`;
+  document.getElementById('kpi-remote-sub').textContent = `${remoteN.toLocaleString()} remote-friendly jobs`;
+
+  // Fresher %
+  const fresherN = Math.round(RAW.fresher * scale);
+  const fresherPct = adjTotal > 0 ? Math.round((fresherN / adjTotal) * 100) : 0;
+  document.getElementById('kpi-fresher').textContent = `${fresherPct}%`;
+  document.getElementById('kpi-fresher-sub').textContent = `${fresherN.toLocaleString()} open to freshers`;
+
+  // Footer
+  document.getElementById('footer-count').textContent =
+    isFiltered ? `Showing ~${adjTotal.toLocaleString()} matching listings` : `Showing all 23,201 listings`;
+
+  // Update roles chart
+  const roleData = Object.values(RAW.roles).map(v => Math.round(v * scale));
+  charts.roles.data.datasets[0].data = roleData;
+  charts.roles.update();
+
+  // Update workmode
+  let wm;
+  if (mode !== 'all') {
+    wm = { "On-site": 0, "Hybrid": 0, "Remote": 0 };
+    wm[mode] = Math.round(RAW.workMode[mode] * scale / (RAW.workMode[mode] / RAW.total));
+  } else {
+    wm = { "On-site": Math.round(RAW.workMode["On-site"]*scale), "Hybrid": Math.round(RAW.workMode["Hybrid"]*scale), "Remote": Math.round(RAW.workMode["Remote"]*scale) };
+  }
+  charts.workmode.data.datasets[0].data = Object.values(wm);
+  charts.workmode.update();
+  updateDonutLegend('legend-workmode', Object.keys(wm), Object.values(wm), PALETTE3);
+
+  // Skills — adjust if role filtered
+  const skillScale = role !== 'all' ? scale * 1.2 : scale;
+  charts.skills.data.datasets[0].data = Object.values(RAW.skillDomains).map(v => Math.round(v * skillScale));
+  charts.skills.update();
+  updateDonutLegend('legend-skills', Object.keys(RAW.skillDomains), charts.skills.data.datasets[0].data, PALETTE5);
+
+  // Exp chart
+  const expVals = Object.values(RAW.expTiers).map(v => Math.round(v * scale));
+  charts.exp.data.datasets[0].data = expVals;
+  charts.exp.update();
+
+  // Comp size
+  charts.compsize.data.datasets[0].data = Object.values(RAW.compSize).map(v => Math.round(v * scale));
+  charts.compsize.update();
+  updateDonutLegend('legend-compsize', Object.keys(RAW.compSize), charts.compsize.data.datasets[0].data, PALETTE3b);
+
+  // Cities hbar — scale by city filter
+  const scaledCities = {};
+  Object.entries(RAW.cities).forEach(([c, v]) => {
+    scaledCities[c] = city !== 'all' ? (c === city ? Math.round(v * (role !== 'all' ? scale / (RAW.cities[city]/RAW.total) : 1)) : 0) : Math.round(v * scale);
+  });
+  const filteredCities = city !== 'all'
+    ? Object.fromEntries([[city, scaledCities[city]]])
+    : scaledCities;
+  buildHbarCities(filteredCities);
+
+  // Show active filter bar
+  const bar = document.getElementById('active-filter-bar');
+  const tags = document.getElementById('af-tags');
+  if (isFiltered) {
+    bar.classList.add('visible');
+    let t = '';
+    if (role !== 'all') t += `<span class="af-tag">${role}</span> `;
+    if (city !== 'all') t += `<span class="af-tag">${city}</span> `;
+    if (exp  !== 'all') t += `<span class="af-tag">${exp}</span> `;
+    if (mode !== 'all') t += `<span class="af-tag">${mode}</span> `;
+    tags.innerHTML = t;
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
+function updateDonutLegend(id, labels, data, colors) {
+  const total = data.reduce((a,b)=>a+b,0);
+  const legend = document.getElementById(id);
+  legend.innerHTML = '';
+  labels.forEach((l, i) => {
+    const pct = total > 0 ? ((data[i]/total)*100).toFixed(1) : '0.0';
+    legend.innerHTML += `
+      <div class="legend-row">
+        <div class="legend-dot" style="background:${colors[i]}"></div>
+        <span class="legend-name">${l}</span>
+        <span class="legend-pct">${pct}%</span>
+      </div>`;
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   EVENT LISTENERS
+═══════════════════════════════════════════════════ */
+document.getElementById('f-role').addEventListener('change', e => {
+  state.role = e.target.value; applyFilters();
+});
+document.getElementById('f-city').addEventListener('change', e => {
+  state.city = e.target.value; applyFilters();
+});
+document.getElementById('f-exp').addEventListener('change', e => {
+  state.exp = e.target.value; applyFilters();
+});
+
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    state.mode = pill.dataset.mode;
+    applyFilters();
+  });
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  state.role = 'all'; state.city = 'all'; state.exp = 'all'; state.mode = 'all';
+  document.getElementById('f-role').value = 'all';
+  document.getElementById('f-city').value = 'all';
+  document.getElementById('f-exp').value  = 'all';
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  document.querySelector('.filter-pill[data-mode="all"]').classList.add('active');
+  applyFilters();
+});
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+buildCharts();
+</script>
+</body>
+</html>
